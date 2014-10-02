@@ -34,7 +34,10 @@
 \setcounter{MaxMatrixCols}{20}
 \usepackage{epsfig}
 \usepackage{comment}
+\usepackage[space]{cite}
+\usepackage{titling}
 
+\bibliographystyle{plain}
 \DeclareGraphicsExtensions{.pdf,.jpeg,.png,.eps}
 \graphicspath{{figures/}}
 
@@ -53,6 +56,7 @@
 
 \input{notation}
 
+\setlength{\droptitle}{-10em}   % This is your set screw
 \begin{document}
 
 \title{Robostats Project Proposal \\ Sparse Planning Graphs for Information \\ Driven Simultaneous Localization and Mapping}
@@ -68,6 +72,8 @@
 \input{metrics_for_success}
 \input{required_resources}
 \input{timeline}
+
+\bibliography{refs}
 
 \end{document}
 
