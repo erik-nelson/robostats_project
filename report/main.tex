@@ -6,7 +6,7 @@
 \usepackage[cmex10]{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
-\usepackage{mathtools}
+%\usepackage{mathtools}
 \usepackage{algorithmic}
 \usepackage{array}
 \usepackage{mdwmath}
@@ -48,7 +48,7 @@ Ideally, such a formulation would provide guarantees on the maximum horizon leng
 
 Our goal is to enable receding horizon planning for active SLAM in a computationally tractable formulation. The active SLAM exploration problem can be framed as determining the control actions which guide a robot to a state that maximizes mutual information between its current and future maps. Efficient implementations of active SLAM allow robots to plan several control actions into the future. In this section we detail a sparse graph-based architecture which enables efficient updates to estimated mutual information gains at future poses upon acquiring new observations. This solution allows us to plan many steps into the future, with guarantees on the maximum horizon distance at which it is no longer feasible to compute an optimal plan in real-time.
 
-We model the map as an occupancy grid, and represent the map as a conglomeration of cells: $m = \{m^{i}\}_{i=1}^{N}$. The probability that an individual cell is occupied at $t$ is given by $p\left(m^{i} \ \vert \ x_{1:t}, z_{1:t}\right)$, where $x_{1:t}$ denotes the history of states of the vehicle, and $z_{1:t}$ denotes the history of range observations accumulated by the vehicle. Additionally we assume that cell occupancies  are independent of one another: $p\left(m \ \vert \ x_{1:t}, z_{1:t}\right) = \prod_{i} p\left(m^{i} \ \vert \ x_{1:t}, z_{1:t}\right)$. For notational simplicity we write the map conditioned on random variables $x_{1:t}$ and $z_{1:t}$ as $p\left(m_{t}\right) \coloneqq p\left(m \ \vert \ x_{1:t}, z_{1:t}\right)$.
+We model the map as an occupancy grid, and represent the map as a conglomeration of cells: $m = \{m^{i}\}_{i=1}^{N}$. The probability that an individual cell is occupied at $t$ is given by $p\left(m^{i} \ \vert \ x_{1:t}, z_{1:t}\right)$, where $x_{1:t}$ denotes the history of states of the vehicle, and $z_{1:t}$ denotes the history of range observations accumulated by the vehicle. Additionally we assume that cell occupancies  are independent of one another: $p\left(m \ \vert \ x_{1:t}, z_{1:t}\right) = \prod_{i} p\left(m^{i} \ \vert \ x_{1:t}, z_{1:t}\right)$. For notational simplicity we write the map conditioned on random variables $x_{1:t}$ and $z_{1:t}$ as $p\left(m_{t}\right) := p\left(m \ \vert \ x_{1:t}, z_{1:t}\right)$.
 
 The optimal plan over a one step horizon will guide the robot to a state, $x_{t+1}^{*}$, in which the mutual information between $m_{t}$ and $m_{t+1}$ is maximized.
 
@@ -109,16 +109,16 @@ The term $\text{H}\left[m_{t}\right]$ is independent of the future state $x_{t+1
     \text{H}\left[
         m_{t+1}^{i}
     \right]
-%    \\
-%    &=
-%    -\sum_{i=1}^{N}
-%    p\left(m_{t+1}^{i}\right)
-%    \log p\left(m_{t+1}^{i}\right)
-%    \\
-%    &\quad 
-%    -\sum_{i=1}^{N}
-%    \left( 1 - p\left(m_{t+1}^{i}\right) \right)
-%    \log \left( 1 - p\left(m_{t+1}^{i}\right) \right)
+   \\
+   &=
+   -\sum_{i=1}^{N}
+   p\left(m_{t+1}^{i}\right)
+   \log p\left(m_{t+1}^{i}\right)
+   \\
+   &\quad
+   -\sum_{i=1}^{N}
+   \left( 1 - p\left(m_{t+1}^{i}\right) \right)
+   \log \left( 1 - p\left(m_{t+1}^{i}\right) \right)
 \end{split} \end{align}
 
 The expectation to minimize is therefore
@@ -129,7 +129,7 @@ The expectation to minimize is therefore
             m_{t+1}
         \right]
     \right]
-    &= 
+    &=
     \int
     p\left(
         z_{t+1}
@@ -149,20 +149,26 @@ The expectation to minimize is therefore
     \right]
 \end{split} \end{align}
 
+\section{Planner}
+
+The purpose of the planner is to find a dynamically feasible series of control actions over a time interval, $\tau := t+1 : t+T$, through a metric space, $\mathcal{X}$, which enable the robot to gather observations that maximize an information metric over its map. We define an \textit{action} as a discrete sequence of states, $x_{\tau} = \left[x_{t+1},\dots,x_{t+T}\right]$. While executing an action, the robot will obtain a set of measurements $z_{\tau}(x_{\tau}) = \left[z_{t+1},\dots,z_{t+T}\right]$ by sensing from the states $x_{\tau}$. Under this notation, the planner must determine $x_{\tau}^{*}$, the action that visits locations which allow the robot to obtain the set of measurements, $z_{\tau}^{*}$, which, when integrated into the map, maximize an information-theoretic cost function over the map. We choose to maximize Shannon mutual information rate between the current map, $m_t$, and the map at time $t+T$ after integrating $z_{\tau}$, $m_{\tau}(z_{\tau})$.
+
+\begin{align} \begin{split}
+  z_{\tau}^{*}
+  &=
+  \argmax_{z_{\tau}}
+  \frac{\text{I}_{\text{MI}}\left[m_{t}; m_{\tau}\left(z_{\tau}\right) \right]}
+  {T}
+\end{split} \end{align}
+
+The choice of mutual information rate, as opposed to mutual information, allows the planner to consider actions which differ in duration.
+
+In typical 2D and 3D mobile robot planning problems, $\mathcal{X} = \mathcal{C}$, the configuration space, which contains a fixed obstacle region, $X_{obs} \subset \mathcal{X}$, and a complementary free space region, $X_{free} = \mathcal{X} \setminus X_{obs}$.
+
+
 
 
 \end{document}
-
-
-
-
-
-
-
-
-
-
-
 
 
 
