@@ -6,7 +6,6 @@
 \usepackage[cmex10]{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
-%\usepackage{mathtools}
 \usepackage{algorithmic}
 \usepackage{array}
 \usepackage{mdwmath}
@@ -19,33 +18,346 @@
 \usepackage{url}
 
 % correct bad hyphenation here
-\hyphenation{op-tical net-works semi-conduc-tor}
 \input{notation}
 
 \begin{document}
 
 \title{Sparse Planning Graphs for Information Driven Simultaneous Localization and Mapping}
 \author{\IEEEauthorblockN{1,2,3}
-\IEEEauthorblockA{The Robotics Institute\\
-Carnegie Mellon University\\
-Pittsburgh, PA 15217\\
+  \IEEEauthorblockA{The Robotics Institute\\
+    Carnegie Mellon University\\
+    Pittsburgh, PA 15217\\
 Email: \{1,2,3\}@cmu.edu}}
 
 \maketitle
 
 \begin{abstract}
-\boldmath
-\dots
+  \boldmath
+  \dots
 \end{abstract}
 
 \IEEEpeerreviewmaketitle
 
 \section{Introduction}
+\label{section:introduction}
 
-Ideally, such a formulation would provide guarantees on the maximum horizon length at which the active SLAM can be solved in real-time.
+\section{Occupancy Grid Mapping}
+\label{section:occupancy_grid_mapping}
 
-\section{Problem Formulation}
+We model the map as an occupancy grid, and represent the map as a conglomeration of cells: $m = \{m^{i}\}_{i=1}^{N}$. The probability that an individual cell is occupied is given by $p\left(m^{i} \ \vert \ x_{1:t}, z_{1:t}\right)$, where $x_{1:t}$ denotes the history of states of the vehicle, and $z_{1:t}$ denotes the history of range observations accumulated by the vehicle. Additionally we assume that cell occupancies  are independent of one another: $p\left(m \ \vert \ x_{1:t}, z_{1:t}\right) = \prod_{i} p\left(m^{i} \ \vert \ x_{1:t}, z_{1:t}\right)$. For notational simplicity we write the map conditioned on random variables $x_{1:t}$ and $z_{1:t}$ as $p_{t}\left(m\right) := p\left(m \ \vert \ x_{1:t}, z_{1:t}\right)$.
 
+\section{Exploration Cost Functional}
+\label{section:exploration_cost_functional}
+
+The purpose of the planner is to find a dynamically feasible series of control actions from a set of motion primitives, $\mc{X}$, over a time interval, $\tau := t+1 : t+T$, which enable the robot to gather observations that maximize an information metric over its map. We define an \textit{action} as a discrete sequence of states, $x_{\tau} = \left[x_{t+1},\dots,x_{t+T}\right]$. While executing an action, the robot will obtain a set of measurements $z_{\tau}(x_{\tau}) = \left[z_{t+1},\dots,z_{t+T}\right]$ by sensing from the states $x_{\tau}$. Under this notation, the planner must determine $x_{\tau}^{*}$, the action that visits locations which allow the robot to obtain the set of measurements, $z_{\tau}^{*}$, which, when integrated into the map, maximize an information-theoretic cost function over the map. We choose to maximize Shannon Mutual Information rate between the current map, $m$, and the measurements $z_{\tau}$ gathered along $x_{\tau}$.
+%
+\begin{align}
+  \begin{split}
+    x_{\tau}^{*}
+    &=
+    \argmax_{x_{\tau} \in \mc{X}^{T}}
+    \frac{\text{I}_{\text{MI}}
+      \left[
+        m
+        ;
+        z_{\tau}
+        \ \vert \
+        x_{\tau}
+      \right]
+    }
+    {R\left(T\right)}
+  \end{split}
+\end{align}
+%
+where $\text{I}_{\text{MI}}$ is the Shannon Mutual Information.
+%
+\begin{align}
+  \begin{split}
+    \text{I}_{\text{MI}}
+    \left[
+      m
+      ;
+      z_{\tau}
+    \right]
+    &=
+    \text{H}
+    \left[
+      m
+    \right]
+    -
+    \text{H}
+    \left[
+      m
+      \ \vert \
+      z_{\tau}
+    \right]
+  \end{split}
+\end{align}
+%
+Since the optimization is performed over $x_{\tau}$, the map entropy term can be removed.
+%
+\begin{align}
+  \begin{split}
+    x_{\tau}^{*}
+    &=
+    \argmax_{x_{\tau} \in \mc{X}^{T}}
+    \frac{
+      -
+      \text{H}
+      \left[
+        m
+        \ \vert \
+        z_{\tau}
+      \right]
+    }
+    {
+      R
+      \left(
+      T
+      \right)
+    }
+  \end{split}
+\end{align}
+%
+Here we can make several assumptions to simplify the optimization of $x_{\tau}^{*}$. Due to cell independence in the occupancy grid formulation, the joint entropy over the map can be expressed as a sum of individual cell entropies. Additionally, let $\mc{C}$ to be the set of cells in the map that beams in $z_{\tau}$ pass through. We note that cells $c \notin \mc{C}$ are not updated by $z_{\tau}$ and therefore do not contribute to the map's conditional entropy. Using these assumptions, as well as the notation $p_c^{\tau} \equiv p(c \ \vert \ z_{\tau})$ and $o(c \ \vert \ z_{\tau}) \equiv p_{c}^{\tau}\log p_{c}^{\tau} + (1 - p_{c}^{\tau})\log (1 - p_{c}^{\tau})$, we may write the entropy of the map conditioned on $z_{\tau}$ as
+%
+\begin{align}
+  \begin{split}
+    \text{H}
+    \left[
+      m
+      \ \vert \
+      z_{\tau}
+    \right]
+    &=
+    \sum_{c \in \mc{C}}
+    \text{H}
+    \left[
+      c
+      \ \vert \
+      z_{\tau}
+    \right]
+    \\
+    &=
+    \sum_{c \in \mc{C}}
+    \expect_{c, z_{\tau}}
+    \left[
+      -\log
+      p
+      \left(
+      c
+      \ \vert \
+      z_{\tau}
+      \right)
+    \right]
+    \\
+    &=
+    -
+    \int_{z_{\tau}}
+    p
+    \left(
+    z_{\tau}
+    \right)
+    \sum_{c \in \mc{C}}
+    o
+    \left(
+    c
+    \ \vert \
+    z_{\tau}
+    \right)
+    d z_{\tau}
+    \label{eq:conditional_entropy}
+  \end{split}
+\end{align}
+%
+Integration over the space of measurements $z_{\tau}$ is computationally intractable. Instead, we approximate Eq.~\eqref{eq:conditional_entropy} using $N$ Monte Carlo samples from the distribution $p(z_{\tau})$.
+%
+\begin{align}
+  \begin{split}
+    \text{H}
+    \left[
+      m
+      \ \vert \
+      z_{\tau}
+    \right]
+    &\approx
+    -\frac{1}{N}
+    \sum_{i=1}^{N}
+    \sum_{c \in \mc{C}}
+    o
+    \left(
+    c
+    \ \vert \
+    z_{\tau}^{i}
+    \right)
+    \\
+  \end{split}
+\end{align}
+%
+\begin{align}
+  \begin{split}
+    x_{\tau}^{*}
+    &=
+    \argmax_{x_{\tau} \in \mc{X}^{T}}
+    \frac{1}{R\left(T\right)}
+    \sum_{i=1}^{N}
+    \sum_{c \in \mc{C}}
+    o
+    \left(
+    c \ \vert \ z_{\tau}^{i}
+    \right)
+  \end{split}
+\end{align}
+%
+\subsection{Measurement Model}
+
+As explained in Sect.~\ref{section:exploration_cost_functional}, each future position $x_{k}$ will generate a multi-beam range measurement $z_{m}$. We express each measurement as a $K$-tuple random variable, $z_{m} = \left[z_{m}^{1}, \dots, z_{m}^{K}\right]$, with $z_{m}^{k} \in \left[z_{min}, z_{max}\right]$. A measurement model is required to sample from the distribution $p(z_{\tau} \ \vert \ m)$. Assuming laser beam independence, $p(z_{\tau} \ \vert \ m)$ can be expressed as a product of the measurement probabilities of individual beams at each timestep over the interval $\tau = t+1:t+T$.
+%
+\begin{align}
+  \begin{split}
+    p
+    \left(
+    z_{\tau}
+    \ \vert \
+    m
+    \right)
+    &=
+    \prod_{m=t+1}^{t+T}
+    \prod_{k=1}^{K}
+    p
+    \left(
+    z_{m}^{k}
+    \ \vert \
+    m
+    \right)
+  \end{split}
+\end{align}
+%
+The probability of a single beam measurement can be expressed as a function of the true distance, $r$, to the obstacle.
+%
+\begin{align}
+  \begin{split}
+    p
+    \left(
+    z_{m}^{k}
+    \ \vert \
+    m
+    \right)
+    &=
+    \int_{r}
+    p
+    \left(
+    z_{m}^{k}
+    \ \vert \
+    r
+    ,
+    m
+    \right)
+    p
+    \left(
+    r
+    \ \vert \
+    m
+    \right)
+    dr
+  \end{split}
+\end{align}
+%
+\begin{align}
+  \begin{split}
+    p
+    \left(
+    z_{m}^{k}
+    \ \vert \
+    r
+    ,
+    m
+    \right)
+    &=
+    \left\{
+    \begin{array}{ll}
+      \mc{N}(z_{m}^{k} - r, \sigma_{hit}^{2}) &: z_{min} \le r \le z_{max} \\
+            \mc{N}(z_{max}, \sigma_{hit}^{2}) &: z_{max} < r \\
+                                            0 &: r < z_{min}
+    \end{array}
+    \right.
+    \label{eq:measurement_model}
+  \end{split}
+\end{align}
+%
+where $\mc{N}(x - \mu, \sigma^{2})$ is a one-dimensional Gaussian with mean $\mu$ and variance $\sigma^{2}$. The Gaussian term in Eq.~\eqref{eq:measurement_model} is an approximation for the true distribution, which is a complex function of both beam angle as well as non-axial distance-dependent noise. The environment-dependent distribution $p(r)$ corresponds to the probability that an obstacle intersects a beam at range $r$. We model this as a Poisson binomial distribution with probabilities decaying according to the inverse square of the beam range.
+
+On the interval $\left[z_{min}, z_{\max}\right]$, $p(z_{m}^{k})$ reduces to a Gaussian convolution with $p(r)$ over $r$, which can be computed in $O(n \log n)$ operations with a Fast Fourier Transform. This computation can be reduced to $O(n)$ by assuming that $\sigma_{hit}$ of the range sensor is much smaller than the resolution of the map.
+
+The distribution $p(r)$ represents the probability that the first obstacle along a ray originating at the sensor is found at distance $r$. $p(r)$ can be expressed as a generalization of the geometric distribution for independent, but not identically distributed (i.n.i.d.) Bernoulli trials.
+%
+\begin{align}
+  \begin{split}
+    p(r = i
+    \ \vert \
+    m)
+    &=
+    p_{t}(m^i)
+    \prod_{j=1}^{i-1}
+    \left(
+      1 - p_{t}(m^{j})
+    \right)
+    \\
+    &=
+    p_{t}(m^i)
+    \left(
+      \frac{1}{p_{t}(m^{i-1})} - 1
+    \right)
+    p(r = i - 1
+    \ \vert \
+    m)
+  \end{split}
+\end{align}
+
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\textwidth]{meas_model.pdf}
+  \caption{The distribution $p(r \ \vert \ m)$ over a depicted 1-dimensional map with resolution $\Delta r = 0.1$ m, and $p_{e} = 0.01$, $p_{o} = 0.92$, $p_{u} = 0.05$. \label{fig:measurement_model}}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\iffalse
 Our goal is to enable receding horizon planning for active SLAM in a computationally tractable formulation. The active SLAM exploration problem can be framed as determining the control actions which guide a robot to a state that maximizes mutual information between its current and future maps. Efficient implementations of active SLAM allow robots to plan several control actions into the future. In this section we detail a sparse graph-based architecture which enables efficient updates to estimated mutual information gains at future poses upon acquiring new observations. This solution allows us to plan many steps into the future, with guarantees on the maximum horizon distance at which it is no longer feasible to compute an optimal plan in real-time.
 
 We model the map as an occupancy grid, and represent the map as a conglomeration of cells: $m = \{m^{i}\}_{i=1}^{N}$. The probability that an individual cell is occupied at $t$ is given by $p\left(m^{i} \ \vert \ x_{1:t}, z_{1:t}\right)$, where $x_{1:t}$ denotes the history of states of the vehicle, and $z_{1:t}$ denotes the history of range observations accumulated by the vehicle. Additionally we assume that cell occupancies  are independent of one another: $p\left(m \ \vert \ x_{1:t}, z_{1:t}\right) = \prod_{i} p\left(m^{i} \ \vert \ x_{1:t}, z_{1:t}\right)$. For notational simplicity we write the map conditioned on random variables $x_{1:t}$ and $z_{1:t}$ as $p\left(m_{t}\right) := p\left(m \ \vert \ x_{1:t}, z_{1:t}\right)$.
@@ -53,105 +365,104 @@ We model the map as an occupancy grid, and represent the map as a conglomeration
 The optimal plan over a one step horizon will guide the robot to a state, $x_{t+1}^{*}$, in which the mutual information between $m_{t}$ and $m_{t+1}$ is maximized.
 
 \begin{align} \begin{split}
-    x_{t+1}^{*}
-    &=
-    \argmax_{x_{t+1}}
-    \
-    \text{IG}\left[
-        m_{t}
-        ;
-        m_{t+1}
-    \right]
-    \\
-    &=
-    \argmax_{x_{t+1}}
-    \
+  x_{t+1}^{*}
+  &=
+  \argmax_{x_{t+1}}
+  \
+  \text{IG}\left[
+    m_{t}
+    ;
+    m_{t+1}
+  \right]
+  \\
+  &=
+  \argmax_{x_{t+1}}
+  \
+  \text{H}\left[
+    m_{t}
+  \right]
+  -
+  \expect_{z_{t+1}}\left[
     \text{H}\left[
-        m_{t}
+      m_{t+1}
     \right]
-    -
-    \expect_{z_{t+1}}\left[
-        \text{H}\left[
-            m_{t+1}
-        \right]
+  \right]
+  \\
+  &=
+  \argmin_{x_{t+1}}
+  \
+  \expect_{z_{t+1}}\left[
+    \text{H}\left[
+      m_{t+1}
     \right]
-    \\
-    &=
-    \argmin_{x_{t+1}}
-    \
-    \expect_{z_{t+1}}\left[
-        \text{H}\left[
-            m_{t+1}
-        \right]
-    \right]
+  \right]
 \end{split} \end{align}
 
 The term $\text{H}\left[m_{t}\right]$ is independent of the future state $x_{t+1}$, so the information gain is maximized when $x_{t+1}$ minimizes the expected entropy of the updated map. The independence between cell occupancies allows us to write the future entropy of the map as a sum of future entropies of individual grid cells:
 
 \begin{align} \begin{split}
-    \text{H}\left[
-        m_{t+1}
-    \right]
-    &=
-    \sum_{i=1}^{N}
-    \text{H}\left[
-        m_{t+1}^{i}
-        \ \vert \
-        m_{t+1}^{i-1}
-        , \
-        \dots
-        \ ,
-        m_{t+1}^{1}
-    \right]
-    \\
-    &=
-    \sum_{i=1}^{N}
-    \text{H}\left[
-        m_{t+1}^{i}
-    \right]
-   \\
-   &=
-   -\sum_{i=1}^{N}
-   p\left(m_{t+1}^{i}\right)
-   \log p\left(m_{t+1}^{i}\right)
-   \\
-   &\quad
-   -\sum_{i=1}^{N}
-   \left( 1 - p\left(m_{t+1}^{i}\right) \right)
-   \log \left( 1 - p\left(m_{t+1}^{i}\right) \right)
+  \text{H}\left[
+    m_{t+1}
+  \right]
+  &=
+  \sum_{i=1}^{N}
+  \text{H}\left[
+    m_{t+1}^{i}
+    \ \vert \
+    m_{t+1}^{i-1}
+    , \
+    \dots
+    \ ,
+    m_{t+1}^{1}
+  \right]
+  \\
+  &=
+  \sum_{i=1}^{N}
+  \text{H}\left[
+    m_{t+1}^{i}
+  \right]
+  \\
+  &=
+  -\sum_{i=1}^{N}
+  p\left(m_{t+1}^{i}\right)
+  \log p\left(m_{t+1}^{i}\right)
+  \\
+  &\quad
+  -\sum_{i=1}^{N}
+  \left( 1 - p\left(m_{t+1}^{i}\right) \right)
+  \log \left( 1 - p\left(m_{t+1}^{i}\right) \right)
 \end{split} \end{align}
 
 The expectation to minimize is therefore
 
 \begin{align} \begin{split}
-    \expect_{z_{t+1}}\left[
-        \text{H}\left[
-            m_{t+1}
-        \right]
-    \right]
-    &=
-    \int
-    p\left(
-        z_{t+1}
-    \right)
-    \sum_{i=1}^{N}
+  \expect_{z_{t+1}}\left[
     \text{H}\left[
-        m_{t+1}^{i}
+      m_{t+1}
     \right]
-    dz_{t+1}
-    \\
-    &=
-    -\expect_{z_{t+1}}\left[
-        \sum_{i=1}^{N}
-        \log p\left(
-            m_{t+1}^{i}
-        \right)
-    \right]
+  \right]
+  &=
+  \int
+  p\left(
+  z_{t+1}
+  \right)
+  \sum_{i=1}^{N}
+  \text{H}\left[
+    m_{t+1}^{i}
+  \right]
+  dz_{t+1}
+  \\
+  &=
+  -\expect_{z_{t+1}}\left[
+    \sum_{i=1}^{N}
+    \log p\left(
+    m_{t+1}^{i}
+    \right)
+  \right]
 \end{split} \end{align}
 
 \section{Planner}
-
-The purpose of the planner is to find a dynamically feasible series of control actions over a time interval, $\tau := t+1 : t+T$, through a metric space, $\mathcal{X}$, which enable the robot to gather observations that maximize an information metric over its map. We define an \textit{action} as a discrete sequence of states, $x_{\tau} = \left[x_{t+1},\dots,x_{t+T}\right]$. While executing an action, the robot will obtain a set of measurements $z_{\tau}(x_{\tau}) = \left[z_{t+1},\dots,z_{t+T}\right]$ by sensing from the states $x_{\tau}$. Under this notation, the planner must determine $x_{\tau}^{*}$, the action that visits locations which allow the robot to obtain the set of measurements, $z_{\tau}^{*}$, which, when integrated into the map, maximize an information-theoretic cost function over the map. We choose to maximize Shannon mutual information rate between the current map, $m_t$, and the map at time $t+T$ after integrating $z_{\tau}$, $m_{\tau}(z_{\tau})$.
+The purpose of the planner is to find a dynamically feasible series of control actions over a time interval, $\tau := t+1 : t+T$, through a metric space, $\mathcal{X}$, which enable the robot to gather observations that maximize an information metric over its map. We define an \textit{action} as a discrete sequence of states, $x_{\tau} = \left[x_{t+1},\dots,x_{t+T}\right]$. While executing an action, the robot will obtain a set of measurements $z_{\tau} = \left[z_{t+1},\dots,z_{t+T}\right]$ by sensing from the states $x_{\tau}$. Under this notation, the planner must determine $x_{\tau}^{*}$, the action that visits locations which allow the robot to obtain the set of measurements, $z_{\tau}^{*}$, which, when integrated into the map, maximize an information-theoretic cost function over the map. We choose to maximize Shannon Mutual Information rate between the current map, $m$, and the measurements $z_{\tau}$ gathered along $x_{\tau}$.
 
 \begin{align} \begin{split}
   z_{\tau}^{*}
@@ -164,7 +475,7 @@ The purpose of the planner is to find a dynamically feasible series of control a
 The choice of mutual information rate, as opposed to mutual information, allows the planner to consider actions which differ in duration.
 
 In typical 2D and 3D mobile robot planning problems, $\mathcal{X} = \mathcal{C}$, the configuration space, which contains a fixed obstacle region, $X_{obs} \subset \mathcal{X}$, and a complementary free space region, $X_{free} = \mathcal{X} \setminus X_{obs}$.
-
+\fi
 
 
 
