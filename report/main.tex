@@ -41,13 +41,7 @@
   \dots
 \end{abstract}
 
-\section{Introduction}
-\label{section:introduction}
-
-\section{Occupancy Grid Mapping}
-\label{section:occupancy_grid_mapping}
-
-We model the map as an occupancy grid, and represent the map as a conglomeration of cells: $m = \{m^{i}\}_{i=1}^{N}$. The probability that an individual cell is occupied is given by $p\left(m^{i} \ \vert \ x_{1:t}, z_{1:t}\right)$, where $x_{1:t}$ denotes the history of states of the vehicle, and $z_{1:t}$ denotes the history of range observations accumulated by the vehicle. Additionally we assume that cell occupancies  are independent of one another: $p\left(m \ \vert \ x_{1:t}, z_{1:t}\right) = \prod_{i} p\left(m^{i} \ \vert \ x_{1:t}, z_{1:t}\right)$. For notational simplicity we write the map conditioned on random variables $x_{1:t}$ and $z_{1:t}$ as $p_{t}\left(m\right) := p\left(m \ \vert \ x_{1:t}, z_{1:t}\right)$.
+\input{intro}
 
 \section{Exploration Cost Functional}
 \label{section:exploration_cost_functional}
