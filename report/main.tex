@@ -14,11 +14,14 @@
 \usepackage{mdwmath}
 \usepackage{mdwtab}
 \usepackage{eqparbox}
-\usepackage[tight,footnotesize]{subfigure}
-\usepackage[caption=false,font=footnotesize]{subfig}
+\usepackage{caption}
+\usepackage{subcaption}
+%\usepackage[tight,footnotesize]{subfigure}
+%\usepackage[caption=false,font=footnotesize]{subfig}
 \usepackage{fixltx2e}
 \usepackage{stfloats}
 \usepackage{url}
+\usepackage[margin=1.0in]{geometry}
 
 \bibliographystyle{plain}
 \DeclareGraphicsExtensions{.pdf,.jpeg,.png,.eps}
@@ -48,6 +51,7 @@
 \input{occupancy_grid_mapping}
 \input{explorative_information_cost_function}
 \input{measurement_model}
+\input{planner}
 
 \bibliography{refs}
 
