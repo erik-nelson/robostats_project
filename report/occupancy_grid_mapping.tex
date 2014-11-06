@@ -1,0 +1,19 @@
+\section{Occupancy Grid Mapping}
+\label{section:occupancy_grid_mapping}
+
+We represent the map as an occupancy grid, which consists of a set of cells: $m = \{m^{i}\}_{i=1}^{N}$.
+The probability that an individual cell is occupied is given by $p\left(m^{i} \ \vert \ x_{1:t}, z_{1:t}\right)$, where $x_{1:t}$ denotes the history of states of the vehicle, and $z_{1:t}$ denotes the history of range observations accumulated by the vehicle.
+We assume that cell occupancy probabilities are independent of one another: $p\left(m \ \vert \ x_{1:t}, z_{1:t}\right) = \prod_{i} p\left(m^{i} \ \vert \ x_{1:t}, z_{1:t}\right)$.
+For notational simplicity we write the map conditioned on random variables $x_{1:t}$ and $z_{1:t}$ as $p_{t}\left(m\right) := p\left(m \ \vert \ x_{1:t}, z_{1:t}\right)$.
+Additionally, unobserved grid cells are assigned a uniform prior of being occupied.
+
+We represent the occupancy status of grid cell $m^i$ at time $t$ with a log odds expression
+\begin{align}
+  l_t &:= \log \frac{p \left( m^i \ \vert \ z_{1:t} \right)}{p \left( \bar{m}^i \ \vert \ z_{1:t} \right)}
+\end{align}
+, where $\bar{m}^i$ denotes the probability that $m^i$ is unoccupied.
+When a new observation $z_t$ is obtained, the log odds update is given by
+\begin{align}
+  l_t &= l_{t-1} + \log \frac{p\left( m^i \ \vert \ z_t \right)}{p \left( m^i \right)} - \log \frac{p\left( \bar{m}^i \ \vert \ z_t \right)}{p \left(\bar{m}^i \right)}
+\end{align}
+where the last two terms represent the inverse sensor model.
