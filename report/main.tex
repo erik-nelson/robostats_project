@@ -14,8 +14,10 @@
 \usepackage{mdwmath}
 \usepackage{mdwtab}
 \usepackage{eqparbox}
-\usepackage[tight,footnotesize]{subfigure}
-\usepackage[caption=false,font=footnotesize]{subfig}
+\usepackage{caption}
+\usepackage{subcaption}
+%\usepackage[tight,footnotesize]{subfigure}
+%\usepackage[caption=false,font=footnotesize]{subfig}
 \usepackage{fixltx2e}
 \usepackage{stfloats}
 \usepackage{url}
@@ -55,10 +57,14 @@
 %  \dots
 %\end{abstract}
 
+\section{Progress}
+We plan to turn the results of our project into a conference paper, which we will submit to a January or February conference. Because of this, the following report will read like a draft of the formulation section in a conference paper. We have developed the basic formulation and problem statement, but in this report we have not formally described the novel approach we will use to speed up mutual information computation. In addition, in this draft of the paper we do not yet discuss integration of the RRT planner with mutual information. We have strategies for both of these aspect of our project, which are fully implemented in C++, and are integrated with our lab's SLAM system. In addition, we have our RRT planner working in both simulation and onboard our quadrotors. We will detail our efficient mutual information exploration strategy more thoroughly in our three-quarters and final reports. The introduction and a draft of the formulation for our conference paper follow.
+
 \input{intro}
 \input{occupancy_grid_mapping}
 \input{explorative_information_cost_function}
 \input{measurement_model}
+\input{planner}
 
 \bibliography{refs}
 
