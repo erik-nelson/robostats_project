@@ -58,12 +58,12 @@
 %\end{abstract}
 
 \section{MATLAB Simulation}
-We have implemented a MATLAB simulation (Figure \ref{fig:whiskerbotstart}) of the mutual information exploration strategy outlined in the midterm report.
+We have implemented a MATLAB simulation (Figure \ref{fig:whiskerbotstart}) of the mutual information exploration strategy outlined in the midterm report. As the robot navigates, it analyzes the mutual information between its current map and the expected map after applying each motion primitive to determine which action will be most informative. The current strategy does not use multi-step planning, and assumes independence between laser beams. The final project will include planning horizons of greater than one step.
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=4.5in]{whiskerbotstart.png}
-\caption{MATLAB Simulation}
+\caption{MATLAB Simulation of a robot with a selection of three motion primitives, exploring an unknown environment.}
 \label{fig:whiskerbotstart}
 \end{figure}
 
@@ -77,7 +77,7 @@ Additionally, the ground robot's planner will be adapted from the quadrotor plan
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=4.5in]{ground_robot.png}
-\caption{Ground robot}
+\caption{Ground robot equipped with laser scanner, IMU, and onboard computing.}
 \label{fig:ground_robot}
 \end{figure}
 
