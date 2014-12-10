@@ -1,4 +1,4 @@
-\section{Planning with RRT}
+\section{Closed Loop RRTs}
 \label{sec:planner}
 
 To make use of this information cost function to guide exploration, we consider a sampling-based planning approach that can evaluate the predicted information gain throughout the environment. In addition, we wish to use the occupancy grid that is being updated online (as described in Sect.~\ref{section:occupancy_grid_mapping}) to guide the vehicle around obstacles in the environment. The rapidly-exploring random tree (RRT) algorithm is well suited to planning paths through these types of large environments, and works as follows.
