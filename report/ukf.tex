@@ -1,4 +1,42 @@
-\section{Unscented Kalman Filter}
-\label{sec:unscented_kalman_filter}
+\section{State Estimation}
+\label{sec:state_estimation}
 
+State estimation addresses the problem of determining the robot's pose in the environment given noisy sensor observations.
+This state estimation pipeline's pose output is a superior alternative to directly feeding in exteroceptive sensor observations to the controller and planner.
+In this section, we present an Unscented Kalman Filter for fusing inertial measurement unit (IMU) and localization observations for a 2D robot.
 
+\subsection{Process Model}
+The vehicle state $\mbf{x}$ consists of the global position $\mbf{p} = \left[ p_x \ p_y \right]^T$, global heading angle $\theta$, global velocity $\mbf{v} = \left[ v_x \ v_y \right]^T$, IMU angular velocity bias in the $z$-direction $b_\omega$ and IMU linear acceleration biases in the $x$- and $y$-directions $\mbf{b}_a = \left[ b_{ax} \ b_{ay} \right]^T$.
+%
+\begin{align}
+  \dot{\mbf{p}} &= \mbf{v} \\
+  \dot{\theta} &= \omega - b_\omega - n_\omega \\
+ \dot{\mbf{v}} &= \mbf{C}(\theta) \left( \mbf{a} - \mbf{b}_a - \mbf{n}_a \right) \label{eq:vdot} \\
+\dot{b}_\omega &= n_{b\omega} \label{eq:bomegadot} \\
+  \dot{\mbf{b}}_a &= \mbf{n}_{ba} \label{eq:badot}
+\end{align}
+%
+The IMU measurements are comprised of the $z$-direction angular velocity $\omega$ as well as the body frame $x$- and $y$-direction linear accelerations $\mbf{a} = \left[ a_x \ a_y \right]^T$.
+Both measurements are modelled as being corrupted by additive Gaussian white noise and a random walk bias driven by Gaussian white noise \eqref{eq:bomegadot}, \eqref{eq:badot}.
+\begin{align}
+  \mbf{n} &= \bbm \mbf{n}_a \\ n_\omega \\ \mbf{n}_{ba} \\ n_{b\omega} \ebm \sim \mathcal{N}(\mbf{0}, \mbf{Q}) \label{eq:processnoise} \\
+  \mbf{Q} &= \text{diag}\{ \sigma_a^2, \sigma_a^2, \sigma_\omega^2, \sigma_{ba}^2, \sigma_{ba}^2, \sigma_{b\omega}^2 \} \label{eq:Q}
+\end{align}
+Since the IMU measurements are in the body frame, we use a 2$\times$2 rotation matrix $\mbf{C}(\theta)$ to rotate them into the global reference frame \eqref{eq:vdot}.
+Each component of the noise vector in \eqref{eq:processnoise} is assumed to be independent, and their corresponding covariance sigma values are chosen by offline sensor characterization tests \eqref{eq:Q}.
+
+\subsection{Correction Model}
+The laser scans are used to construct a map of the environment, and a grid-based localization algorithm is used to compute the global pose (position and heading) of the vehicle with respect to the map.
+The sensor model for the localization algorithm is given by
+\begin{align}
+  \mbf{z} &= \bbm \mbf{p} \\ \theta \ebm + \bbm \mbf{C}(\theta) & \mbf{0} \\ \mbf{0}^T & 1 \ebm \mbf{w} \label{eq:observationmodel} \\
+  \mbf{w} &\sim \mathcal{N}(\mbf{0}, \mbf{R} ) \label{eq:obsnoise}
+\end{align}
+The observation noise covariance matrix $\mbf{R}$ \eqref{eq:obsnoise} is computed by fitting a multivariate Gaussian to the posterior probability grid of the localization algorithm.
+Because this covariance is expressed in the scanner frame (assumed to be coincident with the body frame), we rotate its associated noise vector $\mbf{w}$ into the world frame in \eqref{eq:observationmodel}.
+
+\subsection{Unscented Kalman Filter}
+The nonlinearities introduced by the rotation in the process and correction models motivated the choice of the Unscented Kalman Filter in this project.
+For brevity, we omit the complete presentation of all the steps involved in the UKF (we refer the reader to \cite{Julier97_SPIE}).
+We apply the process model and correction model equations when the relevant measurement is received by the state estimator.
+Outlier exteroceptive observations are rejected by a chi-squared innovation gate.
