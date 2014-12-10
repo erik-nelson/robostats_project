@@ -1,7 +1,7 @@
 
 % Single column for now
-%\documentclass[conference]{IEEEtran}
-\documentclass{article}
+\documentclass[conference]{IEEEtran}
+%\documentclass{article}
 
 \usepackage{graphicx}
 \graphicspath{{figures/}}
@@ -34,77 +34,24 @@
 \title{Sparse Planning Graphs for \\ Information Driven Exploration}
 
 % This block only works in IEEE mode
-%\author{\IEEEauthorblockN{1,2,3}
-%  \IEEEauthorblockA{The Robotics Institute\\
-%    Carnegie Mellon University\\
-%    Pittsburgh, PA 15217\\
-%Email: \{1,2,3\}@cmu.edu}}
+\author{\IEEEauthorblockN{Erik Nelson, Vishnu Desaraju, John Yao}
+ \IEEEauthorblockA{The Robotics Institute\\
+   Carnegie Mellon University\\
+   Pittsburgh, PA 15217\\
+   \small \{\texttt{enelson}, \texttt{rajeswar}, \texttt{johnyao}\}\texttt{@cmu.edu}}}
 
 \date{}
 
-\author{
-  Erik Nelson \qquad Vishnu Desaraju \qquad John Yao \\
-  \\
-  \small The Robotics Institute \\
-  \small Carnegie Mellon University \\
-  \small Pittsburgh, PA 15217 \\
-\small \{\texttt{enelson},\ \texttt{rajeswar},\ \texttt{johnyao}\}\texttt{@cmu.edu}}
-
 \maketitle
 
-%\begin{abstract}
-%  \boldmath
-%  \dots
-%\end{abstract}
-
-\section{Progress}
-We plan to turn the results of our project into a conference paper, which we will submit to a January or February conference. Because of this, the following report will read like a draft of the formulation section in a conference paper. We have developed the basic formulation and problem statement, but in this report we have not formally described the novel approach we will use to speed up mutual information computation. In addition, in this draft of the paper we do not yet discuss integration of the RRT planner with mutual information. We have strategies for both of these aspect of our project, which are fully implemented in C++, and are integrated with our lab's SLAM system. In addition, we have our RRT planner working in both simulation and onboard our quadrotors. We will detail our efficient mutual information exploration strategy more thoroughly in our three-quarters and final reports. The introduction and a draft of the formulation for our conference paper follow.
-
+\input{abstract}
 \input{intro}
-\input{occupancy_grid_mapping}
-\input{explorative_information_cost_function}
-\input{measurement_model}
-\input{planner}
+%\input{occupancy_grid_mapping}
+%\input{explorative_information_cost_function}
+%\input{measurement_model}
+%\input{planner}
+%\input{ukf}
 
 \bibliography{refs}
 
 \end{document}
-
-
-
-
-
-
-
-
-%\subsection{Subsection Heading Here}
-%
-%\begin{figure}[!t]
-%\centering
-%\includegraphics[width=2.5in]{3quads.png}
-%\caption{Simulation Results}
-%\label{fig_sim}
-%\end{figure}
-%\begin{table}[!t]
-%\renewcommand{\arraystretch}{1.3}
-%\caption{An Example of a Table}
-%\label{table_example}
-%\centering
-%\begin{tabular}{|c||c|}
-%\hline
-%One & Two\\
-%\hline
-%Three & Four\\
-%\hline
-%\end{tabular}
-%\end{table}
-
-%\appendices
-%\section{Proof of the First Zonklar Equation}
-
-%\begin{thebibliography}{1}
-
-%\bibitem{IEEEhowto:kopka}
-%H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
-%  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
-%\end{thebibliography}

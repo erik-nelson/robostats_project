@@ -1,0 +1,18 @@
+\section{Introduction}
+\label{section:introduction}
+
+Exploration is a key capability that enables robotic vehicles to operate in unknown environments.
+In general, the shortest trajectory over which a robot can greedily explore an environment is the trajectory formed by choosing actions which maximally reduce uncertainty in the environmental belief representation, or map.
+One strategy to accomplish this is to choose control actions that maximize an information metric between the robot's current map and the robot's map at a future timestep.
+This solution is one variant of a broad category of exploration strategies known as active Simultaneous Localization and Mapping (SLAM) \cite{thrun2005probabilistic}.
+
+State of the art active SLAM implementations generally only compute actions over a one-step planning horizon due to the extremely high computational cost of determining expected information gain over all potential future locations \cite{bourgault2002information}, \cite{stachniss2005information}.
+However, plans over much longer horizons can be generated if expected information gain values can be computed once per planning step, cached, and updated efficiently based on new information.
+An even more efficient approach would utilize sparse planning graphs to limit expected information gain calculations to a select few feasible future locations in the map.
+Rapidly Exploring Random Trees (RRT) and lattice graphs are two examples of sparse planning graphs which decompose the reachable space into a sparse set of goal states based on a set of motion primitives for planning purposes.
+
+This project seeks to develop a recursive formulation for efficiently and intelligently updating expected information gain over a finite horizon as the robot moves through an unknown environment and builds a map from sensor observations.
+
+% TODO: say what each of the sections in this report will be about? e.g. In Section \ref{section:occupancy_grid_mapping} we provide a brief overview of how a map is constructed from sensor observations, Section \ref ... etc
+
+
