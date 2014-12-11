@@ -9,17 +9,19 @@ Figure~\ref{fig:} shows snapshots of the system planning through the environment
 
 To change CL-RRT from a goal-directed planner to an exploration-driven planner, we first define the sampling distribution to be a Gaussian centered about the root of the tree, with no bias toward any direction (unlike standard sampling-based planners that will sample the goal some small probability). We also define the cost of each branch segment to just be the information metric computed at its endpoint (as opposed to a more traditional setup where the cost is the total distance traveled from the root plus a cost to go based on an admissible heuristic, such as Euclidean distance to a goal). Finally, since there is no goal to guide the selection of the best branch from the tree, we simply select the branch with the minimum cost endpoint in the entire tree. This enables the planner to compute paths that aim to maximize the predicted information gain.
 
+Define $\mathcal{X}_\text{free}$ to be the space spanned by the unoccupied cells in the occupancy grid.
+
 \begin{algorithm}
 \caption{CL-RRT: Tree Expansion}
 \label{alg:clrrt_expansion}
 \begin{algorithmic}[1]
-\State Sample point $x_sample$ from the environment
-State Identify nearest node $N_near$ in tree
+\State Sample point $x_s$ from the environment
+\State Select min-cost node from $n$ nearest in tree
 \State $k \gets 0$
-\State $\hat{x}(t+k) \gets $ last state of $N_near$
-\While{$\hat{x}(t+k) \in \mathcal{X}_free(t+k)$ and $\hat{x}(t+k)$ has not reached $x_sample$ }
-	\State Compute reference input $\hat{r}(t+k)$ from $x_sample$
-	\State Compute control input $\hat{u}(t+k)$ from control law
+\State $\hat{x}(t+k) \gets $ last state at n
+\While{$\hat{x}(t+k) \in \mathcal{X}_\text{free}(t+k)$ and $\hat{x}(t+k) \neq x_s$}
+	\State Compute control input to drive system to $x_s$
+	\State Forward simulate system dynamics
 	\State Compute next state $\hat{x}(t+k+1)$ from propagation model
 	\State $k \gets k+1$
 \EndWhile
