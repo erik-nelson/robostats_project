@@ -23,7 +23,7 @@ To determine $x_{\tau}^{*}$, we follow Charrow et al. \cite{charrow15} and maxim
 Cauchy-Schwarz Quadratic Mutual Information (CSQMI) rate between the current map and the
 expectation of future measurements collected along an action, $\text{I}_{\text{CS}}[m; z_{\tau} \vert
 x_{\tau}]$.
-
+%
 \begin{align}
   \begin{split}
     x_{\tau}^{*}
@@ -52,7 +52,7 @@ samples. The full MI and CSQMI solutions are remarkably similar when computed
 over an occupancy grid map, further motivating CSQMI's use. CSQMI between the
 map and collection of measurements from $\tau$ is given in
 Eq.~\eqref{eq:csqmi}.
-
+%
 \begin{align}
   \begin{split}
     &\text{I}_{\text{CS}}
@@ -86,7 +86,7 @@ Eq.~\eqref{eq:csqmi}.
     \label{eq:csqmi}
   \end{split}
 \end{align}
-
+%
 where sums are over possible enumerations of $m$, and integrals are over the
 space of measurements that can be observed during $\tau$. CSQMI is non-negative,
 and maps two random variables to a real valued quantity
@@ -102,7 +102,7 @@ $\text{I}_{\text{CS}}[m; z_{k}^{b}] =
 \text{I}_{\text{CS}}[c; z_{k}^{b}]$. Charrow et al. \cite{charrow15} derive a closed form
 solution to the CSQMI between
 a single laser beam and the robot's map.
-
+%
 \begin{align}
   \begin{split}
     \text{I}_{\text{CS}}
@@ -130,12 +130,12 @@ a single laser beam and the robot's map.
     \label{eq:single_beam}
   \end{split}
 \end{align}
-
+%
 Here, $p(e_j)$ is the probability that the $j$th cell in the raycast $c$ is the
 first occupied cell, and $o_i = p(c^{i} = 1)$, the probability that $i$th cell
 in the raycast is occupied. Weights, $w_{l \in [1, C]}$ can be pre-computed over
 the raycast to avoid duplication, and are evaluated as
-
+%
 \begin{align}
   \begin{split}
     w_{l} &=
@@ -144,14 +144,14 @@ the raycast to avoid duplication, and are evaluated as
     (o_{j}^{2} + (1 - o_{j})^{2})
   \end{split}
 \end{align}
-
+%
 By assuming that the resolution of the occupancy grid is greater than the
 variance of the range sensor, which is typically the case in occupancy grid
 mapping scenarios, and by assuming that Gaussians approach zero with growth in $\vert \mu_{l} -
 \mu_{j} \vert$, one may assert that the inner sum in the double sum terms is
 only non-zero when $l$ is close to $j$. In other words, the $\mc{O}(C^2)$ double
 sum terms can be reduced to $\mc{O}(C)$ complexity by assuming
-
+%
 \begin{align}
   \begin{split}
     \sum_{j=0}^{C}
@@ -170,7 +170,7 @@ sum terms can be reduced to $\mc{O}(C)$ complexity by assuming
     \beta_{j, l}\\
   \end{split}
 \end{align}
-
+%
 where $\delta \ll C$, and $\alpha_{j,l}$ and $\beta_{j, l}$ are the weighted Gaussian terms inside
 of the double sums in Eq.~\eqref{eq:single_beam}. Our simulator and robot's
 laser scanners have $\sigma \approx 0.1$ cm, and use occupancy grid sizes of
