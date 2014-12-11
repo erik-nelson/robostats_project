@@ -8,13 +8,15 @@ for robotic exploration. Active perception exploration formulations
 choose control actions which optimize an information-theoretic objective
 function such as Shannon's mutual information or entropy
 \cite{bourgault2002information, stachniss2005information} over the robot's map,
-given a sensor measurement model. Other common exploration techniques, such as Frontier
+given a sensor measurement model. Other common exploration techniques, such as frontier
 exploration \cite{}, use geometric reasoning to infer explorative paths.
 While these strategies work well in practice, they operate on a
 maximum likelihood estimate of the map, and apply heuristics to determine the most uncertain
 locations in the environment. In contrast, active perception strategies do not utilize
 geometric or maximum likelihood assumptions, and instead interpret the map as a binary
 random variable, choosing actions which directly minimize the random variable's uncertainty.
+Additionally, information-based exploration methods easily extend to 3D
+configuration spaces, a benefit which is not shared by frontier methods.
 Julian et al. prove that maximizing mutual information between a
 robot's map and expected future map naturally yields explorative behaviors
 \cite{julian2013mutual}.
