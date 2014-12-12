@@ -3,11 +3,11 @@
 
 The goal of active perception exploration is to find a dynamically feasible
 sequential set of actions over a time interval, $\tau := t+1,\dots,t+T$, which
-enable the robot to explore its environment. We use the critera that an
-explorative action is one which allows the robot to position itself in locations
-that generate observations which are informative to the robot's map. Under this
+enable the robot to explore its environment. We use the criteria that an
+explorative action is one that allows the robot to position itself in locations
+that generate observations that are informative to the robot's map. Under this
 criteria, choosing the optimal exploration action will maximally reduce the
-uncertainty in the robot's map. An \textit{action} can be defined as a discrete sequence of
+uncertainty in the robot's map. More precisely, an \textit{action} can be defined as a discrete sequence of
 states, $x_{\tau} = \left[x_{t+1},\dots,x_{t+T}\right]$. While executing an action,
 the robot will obtain a set of measurements $z_{\tau}(x_{\tau}) =
 \left[z_{t+1}(x_{t+1}),\dots,z_{t+T}(x_{t+T})\right]$ by sensing from the states
@@ -36,7 +36,7 @@ x_{\tau}]$.
         z_{\tau}(x_{\tau})
       \right]
     }
-    {R\left(x_{\tau}\right)} \\
+    {R\left(x_{\tau}\right)}
     \label{eq:mutual_information}
   \end{split}
 \end{align}
@@ -50,8 +50,7 @@ grid cells intersected by all rays in $z_{\tau}$. In contrast,
 MI requires averaging many $\mc{O}(N^{2})$ Monte Carlo
 samples. The full MI and CSQMI solutions are remarkably similar when computed
 over an occupancy grid map, further motivating CSQMI's use. CSQMI between the
-map and collection of measurements from $\tau$ is given in
-Eq.~\eqref{eq:csqmi}.
+map and collection of measurements from $\tau$ is given in \eqref{eq:csqmi}.
 %
 \begin{align}
   \begin{split}
@@ -91,7 +90,7 @@ where sums are over possible enumerations of $m$, and integrals are over the
 space of measurements that can be observed during $\tau$. CSQMI is non-negative,
 and maps two random variables to a real valued quantity
 which represents the information that one learns about each variable by learning
-the other. CSQMI is equal to zero i.f.f. its arguments are independent.
+the other. CSQMI is equal to zero if and only if its arguments are independent.
 
 We represent measurements as $B$-tuple random variables, such that a measurement
 $z_{k}^{b}$ captured at time $k \in \tau$ contains $B$ beams. Most occupancy grid
@@ -133,7 +132,7 @@ a single laser beam and the robot's map.
 %
 Here, $p(e_j)$ is the probability that the $j$th cell in the raycast $c$ is the
 first occupied cell, and $o_i = p(c^{i} = 1)$, the probability that $i$th cell
-in the raycast is occupied. Weights, $w_{l \in [1, C]}$ can be pre-computed over
+in the raycast is occupied. Weights $w_{l \in [1, C]}$ can be pre-computed over
 the raycast to avoid duplication, and are evaluated as
 %
 \begin{align}
@@ -172,7 +171,7 @@ sum terms can be reduced to $\mc{O}(C)$ complexity by assuming
 \end{align}
 %
 where $\delta \ll C$, and $\alpha_{j,l}$ and $\beta_{j, l}$ are the weighted Gaussian terms inside
-of the double sums in Eq.~\eqref{eq:single_beam}. Our simulator and robot's
+of the double sums in \eqref{eq:single_beam}. Our simulator and robot's
 laser scanners have $\sigma \approx 0.1$ cm, and use occupancy grid sizes of
 $10.0$ cm, allowing us to choose $\delta = 1$ with minimal loss of information.
 

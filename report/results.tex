@@ -4,23 +4,23 @@
 To validate the proposed exploration strategy, we implemented the formulations
 and algorithms discussed in Sections~\ref{sec:information_theoretic_objective}-\ref{sec:state_estimation}
 in a high-fidelity C++ simulation environment. The simulator assumes a ground robot
-constrained to a 2D plane, which is equipped with a noisy laser scanner (range $
+constrained to a 2D horizontal plane, which is equipped with a noisy laser scanner (range $
 = 30$ m, $\sigma = 0.1$ cm), and IMU. The robot's motion is governed by a 13-state nonlinear model of skid-steer dynamics controlled by velocity and yaw rate commands. The velocity command is computed using a proportional-derivative (PD) feedback law on the position error between the robot's current position and current reference point. The yaw rate command is computed based on proportional feedback on the error between the robot's current heading angle and the angle to the reference point. Our simulator generates horizontal laser scans
 from a meshed point cloud input, and generates IMU observations according to the true
-state of the robot. Prior to evaluating CSQMI or building an RRT, we build a map
+state of the robot. Prior to evaluating CSQMI or building an RRT, we populate a map using recent laser scans
 and localize with respect to it using a custom SLAM implementation that was
 developed prior to this project. Our SLAM implementation leverages ICP for laser
 odometry~\cite{pomerleau2013comparing}, a histogram filter for
 localization~\cite{thrun2005probabilistic}, and a custom 3D mapping framework.
 
 
-To evaluate performance of the proposed exploration framework, we consider two simulated environments, shown in Fig.\ref{fig:maps}. Figure~\ref{fig:smallmap_snapshots} shows a series of snapshots of the robot navigating the smaller map. The robot is initially unaware of the map layout and must construct it as it drives. The occupancy grid is updated at 10 Hz, and the planner replans online at 1 Hz to use this updated map information. This enables it to successfully plan around obstacles as they are detected. Moreover, the tree of candidate trajectories that are considered at each planning iteration accurately identifies regions of the map that have not yet been explored and therefore would result in large information gains (indicated by the green nodes in the tree). Regions of the map that have already been observed will yield significantly less information, and this approach accurately captures this effect (indicated by the red nodes in the tree). We observe similar performance on the larger environment, as illustrated in Fig.~\ref{fig:largemap_snapshots}. Due to the speed of the RRT-based approach, the planner is able to consider candidate paths extending into a large portion of the environment at each step, allowing it to automatically identify and explore the most salient regions even in a larger and more complex environment.
+To evaluate performance of the proposed exploration framework, we consider two simulation environments, shown in Fig.~\ref{fig:maps}. Figure~\ref{fig:smallmap_snapshots} shows a series of snapshots of the robot navigating the smaller map. The robot is initially unaware of the map layout and must construct it while driving. The occupancy grid is updated at 10 Hz, and the planner replans online at 1 Hz to use the updated map information. This enables it to successfully plan around obstacles as they are detected. Moreover, the tree of candidate trajectories that are considered at each planning iteration accurately identifies regions of the map that have not yet been explored and therefore would result in large information gains (indicated by the green nodes in the tree). Regions of the map that have already been observed will yield significantly less information, and this approach accurately captures this effect (indicated by the red nodes in the tree). We observe similar performance on the larger environment, as illustrated in Fig.~\ref{fig:largemap_snapshots}. Due to the speed of the RRT-based approach, the planner is able to consider candidate paths extending into a large portion of the environment at each step, allowing it to automatically identify and explore the most salient regions even in an expansive and more complex environment.
 
 \begin{figure}[t]
 	\centering
 	\begin{subfigure}{0.49\textwidth}
 	\centering
-	\includegraphics[height=1.3in]{square.png}
+	\includegraphics[height=1.35in]{square.png}
 	\caption{Small test environment\label{fig:square_map}}
 	\end{subfigure}
 		
@@ -28,10 +28,10 @@ To evaluate performance of the proposed exploration framework, we consider two s
 		
 	\begin{subfigure}{0.49\textwidth}
 	\centering
-	\includegraphics[height=1.3in]{rectangle_medium.png}
+	\includegraphics[height=1.35in]{rectangle_medium.png}
 	\caption{More complex test environment\label{fig:rectangle_medium_map}}
 	\end{subfigure}
-	\caption{Layouts of the environments used to test the proposed exploration technique \label{fig:maps}}
+	\caption{Layouts of the environments used to test the proposed exploration technique. \label{fig:maps}}
 \end{figure}
 
 \begin{figure*}[t]
@@ -99,7 +99,7 @@ To evaluate performance of the proposed exploration framework, we consider two s
 	\begin{subfigure}{0.49\textwidth}
 	\centering
 	\includegraphics[width=0.9\textwidth]{largemap_frame3.png}
-	\caption{Continues expanding map and planning into unknown regions\label{fig:largemap_frame3}}
+	\caption{Planner expands into new regions as the map expands \label{fig:largemap_frame3}}
 	\end{subfigure}
 	\begin{subfigure}{0.49\textwidth}
 	\centering

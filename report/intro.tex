@@ -9,7 +9,7 @@ choose control actions which optimize an information-theoretic objective
 function such as Shannon's mutual information or entropy
 \cite{bourgault2002information, stachniss2005information} over the robot's map,
 given a sensor measurement model. Other common exploration techniques, such as frontier
-exploration \cite{}, use geometric reasoning to infer explorative paths.
+exploration \cite{yamauchi1997frontier}, use geometric reasoning to infer explorative paths.
 While these strategies work well in practice, they operate on a
 maximum likelihood estimate of the map, and apply heuristics to determine the most uncertain
 locations in the environment. In contrast, active perception strategies do not utilize
@@ -28,7 +28,9 @@ robot's map and expected future map naturally yields explorative behaviors
     \includegraphics[height=4.3cm]{ground1.png}
     \caption{Map and trajectory\label{fig:ground_bot1}}
   \end{subfigure}
-  ~
+  
+  \vspace*{0.1in}
+  
   \begin{subfigure}{0.47\textwidth}
     \centering
     \includegraphics[height=4.3cm]{ground2.png}
@@ -46,7 +48,7 @@ from the distribution of measurements. These expensive per-pose computations inh
 online dense evaluation over a configuration space. In this project, we aim to develop an
 efficient active perception exploration strategy which evaluates the
 information-theoretic objective in a sparse, but well-chosen set of poses across the
-configuration space. This strategy evaluation the objective function
+configuration space. This strategy evaluates the objective function
 a limited number of times, while still generating paths that sufficiently explore the space.
 
 % Overview of RRT
@@ -73,13 +75,13 @@ from Shannon's entropy), CSQMI is shown to have superior computational efficienc
 
 % Results and implementation
 The contribution of this work is an exploration framework to enable online exploration using CSQMI in sparse
-planning graphs, such as RRTs. We demonstrate an implementation of our approach
-in simulation, and provide analysis of experiments in which a mobile ground
-robot must explore an unknown space using a laser scanner range sensor. We discuss the
-formulation and implementation of the CSQMI metric, RRT, and a controller and
-Unscented Kalman Filter (UKF) that were developed to enable trajectory tracking and
-state estimation. Finally, we discuss the implementation of these capabilities
-on a real ground robot.
+planning graphs, such as RRTs. 
+We discuss the
+formulation and implementation of the CSQMI metric, RRT, and an Unscented Kalman Filter (UKF) that were developed to enable trajectory tracking and
+state estimation.
+Finally, we demonstrate the performance of our approach
+through a set of simulations in which a mobile ground
+robot must explore an unknown space using a laser scanner range sensor.
 
 % Overview of sections
 This paper is structured in the following manner: Section~\ref{sec:occupancy_grid_mapping}

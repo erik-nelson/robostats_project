@@ -6,7 +6,7 @@ robot's map as a binary random variable. We therefore discretize the space, and
 represent the map as an occupancy grid - a common environmental representation
 for robotic mapping.
 
-As a basis for the core formulation in the following sections, we provide a brief overview of occupancy grid mapping. Occupancy grids are a common and useful
+As a basis for the core formulation in the following sections, we provide a brief overview of occupancy grid mapping. Occupancy grids are a common and useful probabilistic model for representing an environment.
 We represent the map as an occupancy grid, which consists of a set of cells: $m = \{m^{i}\}_{i=1}^{N}$.
 The probability that an individual cell is occupied is given by $p\left(m^{i} \ \vert \ x_{1:t}, z_{1:t}\right)$, where $x_{1:t}$ denotes the history of states of the vehicle, and $z_{1:t}$ denotes the history of range observations accumulated by the vehicle.
 We assume that cell occupancy probabilities are independent of one another: $p\left(m \ \vert \ x_{1:t}, z_{1:t}\right) = \prod_{i} p\left(m^{i} \ \vert \ x_{1:t}, z_{1:t}\right)$.
