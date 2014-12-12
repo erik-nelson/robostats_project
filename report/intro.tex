@@ -3,7 +3,7 @@
 
 % Motivation
 Exploration is a key capability that enables robotic vehicles to operate in
-unknown environments. In this project we develop an active perception policy
+unknown environments. The robot can be controlled to navigate the environment while building a map, leading to traditional simultaneous localization and mapping (SLAM) approaches, as illustrated in Fig.~\ref{fig:ground_bot}. However, this can be extended to also incorporate autonomous path planning, and in this project we develop an active perception policy
 for robotic exploration. Active perception exploration formulations
 choose control actions which optimize an information-theoretic objective
 function such as Shannon's mutual information or entropy
@@ -20,6 +20,22 @@ configuration spaces, a benefit which is not shared by frontier methods.
 Julian et al. prove that maximizing mutual information between a
 robot's map and expected future map naturally yields explorative behaviors
 \cite{julian2013mutual}.
+
+\begin{figure}[t]
+  \centering
+  \begin{subfigure}{0.47\textwidth}
+    \centering
+    \includegraphics[height=4.3cm]{ground1.png}
+    \caption{Map and trajectory\label{fig:ground_bot1}}
+  \end{subfigure}
+  ~
+  \begin{subfigure}{0.47\textwidth}
+    \centering
+    \includegraphics[height=4.3cm]{ground2.png}
+    \caption{Ground robot\label{fig:ground_bot2}}
+  \end{subfigure}
+  \caption{A ground robot mapping while being driven through a cluttered environment.\label{fig:ground_bot}}
+\end{figure}
 
 % Overview of our approach
 Active perception formulations seek to optimize information-theoretic
@@ -72,7 +88,7 @@ information metric. Section~\ref{sec:information_theoretic_objective}
 details the CSQMI information-theoretic cost objective and its similarities to
 Shannon's mutual information. Section~\ref{sec:measurement_model} discusses the
 measurement model that was chosen to evaluate expected future measurements.
-Sections~\ref{sec:planner} and~\ref{sec:unscented_kalman_filter} cover the RRT and UKF formulations
+Sections~\ref{sec:planner} and~\ref{sec:state_estimation} cover the RRT and UKF formulations
 used in our implementation. Finally, Sections~\ref{sec:results}
 and~\ref{sec:conclusion} give results and analysis of our implementation in
 simulation, and describe future work towards implementing our algorithms on a

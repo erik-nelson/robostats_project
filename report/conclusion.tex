@@ -1,2 +1,9 @@
 \section{Conclusion and Future Work}
 \label{sec:conclusion}
+
+In this work, we have presented a novel approach for information-based exploration and validated performance of this approach using a high-fidelity simulation environment of our ground robot platform. These results demonstrate that this information-based planning strategy is able to accurately and automatically identify regions of the environment that will yield the most information, plan feasible paths to these regions, and successfully explore the environment.
+
+While our approach can be used to successfully produce maps of large environments, it can have difficulty escaping local minima where the RRT's paths do not extend far enough into new unknown territories. In future work, we will adaptively modify the RRT's parameters and planning time to enable consideration of longer trajectories when the map's entropy rate becomes low.
+
+Having verified the exploration strategy in simulation, we would also like to experiment with it using a ground robot (Fig.~\ref{fig:ground_bot2}). We currently have the UKF and SLAM running on the ground robot (see map and state estimate in Fig.~\ref{fig:ground_bot1}), so the next steps would be to transition and integrate the planning and control software. In addition, it would be useful to implement the strategy on aerial robots to see if it easily extends to 6D configuration spaces. 
+
